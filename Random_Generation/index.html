@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap">
+    <script src="script.js" defer></script>
+    <title>Document</title>
+</head>
+<body>
+    <h1>Guess The Nation!</h1>
+    <div id="guessDiv" >
+
+        <button id="start" onclick="Start()">Start!</button>
+        <table>
+            <tr>
+                <th>Population</th>
+                <th>Land Area</th>
+                <th>Flag</th>
+            </tr>
+            <tr>
+                <td id="Population">6032304</td>
+                <td id="landAreaMiles">0</td>
+                <td id="FlagHTML">&#127465;&#127472;</td>
+                <!-- <td> <img id="FlagImage" src="https://flags.restcountries.com/v5/w640/dk.png"></td> -->
+            </tr>
+        </table>
+        <form>
+            <label for="guess">What Nation is This?: </label><br>
+            <input type="text" id="guess" name="guess"><br>
+        </form>
+        <button id="GuessButton" onclick="SubmitGuess()"> Guess</button>
+        <p id="cheat"></p>
+        <button id="cheatButton" onclick="Cheat()">Cheat</button>
+    </div>
+    <div id ="correctDiv">
+        <dl id="correctGuesses">
+
+        </dl>
+    </div>
+    <div id="moreInfoDiv">
+        <h2 id="infoCountryName">Name</h2> 
+        <img id="Flag" src="https://flags.restcountries.com/v5/w640/dk.png">
+        <p id="info">more info here!</p>
+    </div>
+</body>
+</html>
