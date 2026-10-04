@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Log</title>
+</head>
+<body>
+    <h1>Get Method!</h1>
+    <form method="GET" action="{{url_for('handle_get')}}">
+        <input type="text" name="username" placeholder="Username">
+        <input type="text" name="password" placeholder="Password">
+        <button type="submit">Submit</button>
+    </form>
+    <h1>Post Method!</h1>
+    <form method="POST" action="{{url_for('handle_post')}}">
+        <input type="text" name="username" placeholder="Username">
+        <input type="text" name="password" placeholder="Password">
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
