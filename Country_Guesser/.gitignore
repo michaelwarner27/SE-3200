@@ -1,0 +1,6 @@
+.venv
+*.db
+# Python bytecode & cache files
+__pycache__/
+*.py[cod]
+*$py.class

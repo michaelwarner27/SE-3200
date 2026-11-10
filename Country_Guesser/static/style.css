@@ -1,0 +1,55 @@
+body{
+    display: grid;
+    grid-template-columns: repeat(12, [col-start] 1fr);
+}
+h1{
+    text-align: center;
+    font-size: 3rem;
+    grid-column: 1/13;
+    grid-row: 1;
+    text-decoration: underline;
+}
+#guessDiv{
+    grid-column: 2/7;
+    grid-row: 2;
+    display: grid;
+    row-gap: 20px;
+}
+#correctDiv{
+    grid-column: 2/7;
+    grid-row: 3;
+}
+#moreInfoDiv{
+    grid-column: 8/11;
+    grid-row: 2/4;
+}
+#start{
+    /* button */
+    margin: auto;
+    width: 50%;
+    height: auto;
+    font-size: 2rem;
+}
+
+table{
+    border-spacing:0px 10px;
+}
+tr th{
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: left;
+
+}
+tr td{
+    font-size: 1rem;
+    background-color: lightgray;
+}
+
+#moreInfoDiv #Flag{
+    padding: 10px;
+    height: 30%;
+    width: auto;
+}
+#FlagHTML{
+    font-family: 'Noto Color Emoji', sans-serif;
+}
