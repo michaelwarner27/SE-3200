@@ -1,7 +1,8 @@
+// Destroy this file!!!!! it's garbage
 const commonNames = ['Abkhazia', 'Afghanistan', 'Albania', 'Algeria', 'American Samoa', 'Andorra', 'Angola', 'Anguilla', 'Antarctica', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Bouvet Island', 'Brazil', 'British Indian Ocean Territory', 'British Virgin Islands', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cambodia', 'Cameroon', 'Canada', 'Caribbean Netherlands', 'Cayman Islands', 'Central African Republic', 'Chad', 'Chile', 'China', 'Christmas Island', 'Cocos (Keeling) Islands', 'Colombia', 'Comoros', 'Congo', 'Cook Islands', 'Costa Rica', 'Croatia', 'Cuba', 'Curaçao', 'Cyprus', 'Czechia', 'DRC', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Falkland Islands', 'Faroe Islands', 'Fiji', 'Finland', 'France', 'French Guiana', 'French Polynesia', 'French Southern and Antarctic Lands', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guadeloupe', 'Guam', 'Guatemala', 'Guernsey', 'Guinea', 'Guinea-Bissau', 'Guyana', 'Haiti', 'Heard Island and McDonald Islands', 'Honduras', 'Hong Kong'];
-const APIKEY = "bearer rc_live_dda8f02bea1b422a9bc24dbaba0c63bb"
-const urlapi = 'https://api.restcountries.com/countries/v5?response_fields=names.common'
-const baseURL = "https://api.restcountries.com/countries/v5?"
+// const APIKEY = "bearer rc_live_dda8f02bea1b422a9bc24dbaba0c63bb"
+// const urlapi = 'https://api.restcountries.com/countries/v5?response_fields=names.common'
+// const baseURL = "https://api.restcountries.com/countries/v5?"
 let currentCountry = "example"
 let payload = ""
 let population = 0
@@ -108,8 +109,8 @@ function SubmitGuess() {
         let correctGuessDisplay = "<dt>"+currentCountry + " <span id=\"FlagHTML\">" + Flag + "</span></dt><dd>Population: " + population + "</dd>"
         // console.log(correctGuessDisplay)
         document.getElementById("correctGuesses").insertAdjacentHTML("afterend", correctGuessDisplay)
-        Start()
         DisplayMoreInfo()
+        Start()
     }else{
         alert("Wrong! Try again")
     }

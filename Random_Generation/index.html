@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap">
-    <script src="script.js" defer></script>
+    <script type="module" src="stupid.js" ></script>
+    <!-- <script src="country.js" defer></script> -->
     <title>Document</title>
 </head>
 <body>
     <h1>Guess The Nation!</h1>
     <div id="guessDiv" >
 
-        <button id="start" onclick="Start()">Start!</button>
+        <button id="start">Start!</button>
         <table>
             <tr>
                 <th>Population</th>
@@ -26,13 +27,13 @@
                 <!-- <td> <img id="FlagImage" src="https://flags.restcountries.com/v5/w640/dk.png"></td> -->
             </tr>
         </table>
-        <form>
-            <label for="guess">What Nation is This?: </label><br>
+        <form id="form">
+            <label form="guess">What Nation is This?: </label><br>
             <input type="text" id="guess" name="guess"><br>
+            <button type="submit"  id="GuessButton" > Guess</button>
         </form>
-        <button id="GuessButton" onclick="SubmitGuess()"> Guess</button>
         <p id="cheat"></p>
-        <button id="cheatButton" onclick="Cheat()">Cheat</button>
+        <button id="cheatButton">Cheat</button>
     </div>
     <div id ="correctDiv">
         <dl id="correctGuesses">
