@@ -1,4 +1,4 @@
-function createCountry() {
+function createUserCountry() {
     const countryData = {
         common_name: document.getElementById("name").value,
         official_name: document.getElementById("official_name").value,
@@ -27,7 +27,7 @@ function createCountry() {
     });
 }
 
-function listCountries() {
+function listUserCountries() {
     return fetch("/countries", { method: "GET" })
     .then(response => response.json().then(data => {
         if (!response.ok) throw new Error(data.error || response.statusText);
@@ -45,10 +45,9 @@ function listCountries() {
     .catch(error => console.error("Error", error));
 }
 
-const form = document.getElementById("countryForm");
-form.addEventListener("submit", function (event) {
-    event.preventDefault();
-    createCountry();
-});
+// const form = document.getElementById("countryForm");
+// form.addEventListener("submit", function (event) {
+//     event.preventDefault();
+//     createCountry();
+// });
 
-listCountries();
