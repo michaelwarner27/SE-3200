@@ -38,8 +38,8 @@ class Country{
         this.flagPNG  = this.payload.data.objects.map(country => country.flag.url_png)[0]
         this.currency = this.payload.data.objects.map(country => country.currencies)[0].name
         this.areaMiles = this.payload.data.objects.map(country => country.area.miles) [0]
-        this.areaKilometer = this.payload.data.objects.map(country => country.area.kilometer)
-        this.officialName = this.payload.data.objects.map(country => country.names.official) 
+        this.areaKilometer = this.payload.data.objects.map(country => country.area.kilometer)[0]
+        this.officialName = this.payload.data.objects.map(country => country.names.official)[0]
         this.capital = this.payload.data.objects.map(country => country.capital)[0] 
     }
 
