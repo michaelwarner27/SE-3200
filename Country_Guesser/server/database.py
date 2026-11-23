@@ -28,6 +28,14 @@ class Database:
                 "user_id INTEGER)"
             )
 
+    def get_country(self, id, user_id=None):
+        c = self._connect()
+        try:
+            row = c.execute("SELECT * FROM countries WHERE id = ? AND user_id = ?", (id, user_id)).fetchone()
+            return dict(row) if row else None
+        finally:
+            c.close()
+
     def create_country(self, common_name, official_name, population, html_flag_code, area, user_id=None):
         c = self._connect()
         try:
@@ -42,17 +50,6 @@ class Database:
             c.close()
         return self.get_country(new_id, user_id)
 
-    def create_countries(self, countries_data: list[tuple]):
-        c = self._connect()
-        try:
-            with c:
-                c.executemany(
-                    "INSERT INTO countries (common_name, official_name, population, html_flag_code, area) "
-                    "VALUES (?, ?, ?, ?, ?)",
-                    countries_data,
-                )
-        finally:
-            c.close()
 
     def get_all_countries(self, user_id=None):
         c = self._connect()
@@ -63,13 +60,6 @@ class Database:
         finally:
             c.close()
 
-    def get_country(self, id, user_id=None):
-        c = self._connect()
-        try:
-            row = c.execute("SELECT * FROM countries WHERE id = ? AND user_id = ?", (id, user_id)).fetchone()
-            return dict(row) if row else None
-        finally:
-            c.close()
 
     def update_country(self, id, common_name, official_name, population, html_flag_code, area, user_id=None):
         c = self._connect()
@@ -142,3 +132,17 @@ class Database:
             return dict(row) if row else None
         finally:
             c.close()
+
+    '''
+    def create_countries(self, countries_data: list[tuple]):
+        c = self._connect()
+        try:
+            with c:
+                c.executemany(
+                    "INSERT INTO countries (common_name, official_name, population, html_flag_code, area) "
+                    "VALUES (?, ?, ?, ?, ?)",
+                    countries_data,
+                )
+        finally:
+            c.close()
+    '''
