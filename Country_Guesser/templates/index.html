@@ -3,85 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Color+Emoji&display=swap">
     <link rel="stylesheet" href="/static/style.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap">
     <script type="module" src="/static/stupid.js"></script>
-    <!-- <script src="country.js" defer></script> -->
-    <title>Document</title>
+    <title>Guess The Nation!</title>
 </head>
 <body>
-    <h1>Guess The Nation!</h1>
+    <header id="topBar">
+        <h1>🌍 Guess The Nation!</h1>
+        <div id="userBar" hidden>
+            <span id="scoreBadge" title="Countries you have guessed correctly"> <span id="score">0</span> guessed</span>
+            <span id="welcome"></span>
+            <button id="logoutButton" class="btn btn-ghost">Log out</button>
+        </div>
+    </header>
 
-    <div id="authDiv">
-    <p id="authMessage" role="alert"></p>
+    <main>
+        <section id="authDiv">
+            <p id="authMessage" role="alert"></p>
 
-    <form id="loginForm">
-        <h2>Log in</h2>
-        <label for="loginEmail">Email</label>
-        <input type="email" id="loginEmail" required>
-        <label for="loginPassword">Password</label>
-        <input type="password" id="loginPassword" required>
-        <button type="submit">Log in</button>
-    </form>
+            <div class="authCards">
+                <form id="loginForm" class="card">
+                    <h2>Log in</h2>
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" autocomplete="email" required>
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" autocomplete="current-password" required>
+                    <button type="submit" class="btn btn-primary">Log in</button>
+                </form>
 
-    <form id="registerForm">
-        <h2>Register</h2>
-        <label for="regFirst">First name</label>
-        <input type="text" id="regFirst" required>
-        <label for="regLast">Last name</label>
-        <input type="text" id="regLast" required>
-        <label for="regEmail">Email</label>
-        <input type="email" id="regEmail" required>
-        <label for="regPassword">Password (8-72 characters)</label>
-        <input type="password" id="regPassword" required minlength="8" maxlength="72">
-        <button type="submit">Register</button>
-    </form>
-    </div>
+                <form id="registerForm" class="card">
+                    <h2>Register</h2>
+                    <div class="nameRow">
+                        <div>
+                            <label for="regFirst">First name</label>
+                            <input type="text" id="regFirst" autocomplete="given-name" required>
+                        </div>
+                        <div>
+                            <label for="regLast">Last name</label>
+                            <input type="text" id="regLast" autocomplete="family-name" required>
+                        </div>
+                    </div>
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" autocomplete="email" required>
+                    <label for="regPassword">Password <small>(8-72 characters)</small></label>
+                    <input type="password" id="regPassword" autocomplete="new-password" required minlength="8" maxlength="72">
+                    <button type="submit" class="btn btn-secondary">Register</button>
+                </form>
+            </div>
+        </section>
 
-    <div id="userBar" hidden>
-        <span id="welcome"></span>
-        <button id="logoutButton">Log out</button>
-    </div>
+        <div id="gameLayout">
+            <div id="leftColumn">
+                <section id="guessDiv" class="card" hidden>
+                    <div class="listPicker">
+                        <label for="listSelect">Country pool</label>
+                        <select id="listSelect"><option>Loading…</option></select>
+                    </div>
+                    <button id="start" class="btn btn-primary">Start!</button>
 
+                    <div class="hints">
+                        <div class="hint">
+                            <span class="hintLabel">Population</span>
+                            <span class="hintValue" id="Population">?</span>
+                        </div>
+                        <div class="hint">
+                            <span class="hintLabel">Land Area</span>
+                            <span class="hintValue" id="landAreaMiles">?</span>
+                        </div>
+                        <div class="hint hintFlag">
+                            <span class="hintLabel">Flag</span>
+                            <span class="hintValue" id="FlagHTML">?</span>
+                        </div>
+                    </div>
 
-    <div id="guessDiv" hidden>
-        <button id="start">Start!</button>
-        <table>
-            <tr>
-                <th>Population</th>
-                <th>Land Area</th>
-                <th>Flag</th>
-            </tr>
-            <tr>
-                <td id="Population">6032304</td>
-                <td id="landAreaMiles">0</td>
-                <td id="FlagHTML">&#127465;&#127472;</td>
-                <!-- <td> <img id="FlagImage" src="https://flags.restcountries.com/v5/w640/dk.png"></td> -->
-            </tr>
-        </table>
-        <form id="form">
-            <label form="guess">What Nation is This?: </label><br>
-            <input type="text" id="guess" name="guess"><br>
-            <button type="submit"  id="GuessButton" > Guess</button>
-        </form>
-        <p id="cheat"></p>
-        <button id="cheatButton">Cheat</button>
-    </div>
+                    <form id="form">
+                        <label for="guess">What nation is this?</label>
+                        <div class="guessRow">
+                            <input type="text" id="guess" name="guess" placeholder="Type a country name…" autocomplete="off">
+                            <button type="submit" id="GuessButton" class="btn btn-secondary">Guess</button>
+                        </div>
+                        <p id="guessMessage" role="alert"></p>
+                    </form>
 
+                    <div class="cheatRow">
+                        <button id="cheatButton" class="btn btn-ghost">Cheat</button>
+                        <p id="cheat"></p>
+                    </div>
+                </section>
 
-    <div id ="correctDiv" hidden>
-        <dl id="correctGuesses">
+                <section id="correctDiv" class="card" hidden>
+                    <div class="cardHeader">
+                        <h2>Correct guesses</h2>
+                        <button id="restartButton" class="btn btn-ghost">Restart</button>
+                    </div>
+                    <ul id="correctGuesses"></ul>
+                </section>
+            </div>
 
-        </dl>
-    </div>
-
-
-    <div id="moreInfoDiv" hidden>
-        <h2 id="infoCountryName">Name</h2> 
-        <img id="Flag" src="https://flags.restcountries.com/v5/w640/dk.png">
-        <p id="info">more info here!</p>
-    </div>
-
-
+            <aside id="moreInfoDiv" class="card" hidden>
+                <h2>Latest correct guess</h2>
+                <h3 id="infoCountryName"></h3>
+                <img id="Flag" src="../static/images/world-map.gif" alt="Flag of the most recent correct guess">
+                <p id="infoDescription"></p>
+                <dl id="info">
+                    <dt>Capital</dt><dd id="infoCapital"></dd>
+                    <dt>Languages</dt><dd id="infoLanguages"></dd>
+                    <dt>Currency</dt><dd id="infoCurrency"></dd>
+                    <dt>Subregion</dt><dd id="infoSubregion"></dd>
+                    <dt>Government</dt><dd id="infoGovernment"></dd>
+                    <dt>Status</dt><dd id="infoStatus" class="badges"></dd>
+                    <dt>Memberships</dt><dd id="infoMemberships" class="badges"></dd>
+                </dl>
+                <a id="infoWiki" class="btn btn-primary" target="_blank" rel="noopener noreferrer" hidden>📖 Read on Wikipedia</a>
+            </aside>
+        </div>
+    </main>
 </body>
 </html>

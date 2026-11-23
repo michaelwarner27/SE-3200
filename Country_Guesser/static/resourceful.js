@@ -38,19 +38,50 @@ export function storeUserCountry(country) {
     });
 }
 
+// Deletes every saved guess for the current user using the existing DELETE /countries/<id> route.
+export async function clearUserCountries() {
+    try {
+        const countries = await fetch("/countries", { method: "GET" }).then(parseResponse);
+        await Promise.all(countries.map(country =>
+            fetch(`/countries/${country.id}`, { method: "DELETE" }).then(parseResponse)
+        ));
+    } catch (error) {
+        console.error("Error:", error);
+        if (error.status !== 401) alert(error.message);
+    }
+    return listUserCountries();
+}
+
+// Stored flags are HTML entity codes (e.g. "&#127464;&#127462;"); decode to plain text without using innerHTML
+function decodeEntities(code) {
+    return new DOMParser().parseFromString(code ?? "", "text/html").documentElement.textContent;
+}
+
 export function listUserCountries() {
     return fetch("/countries", { method: "GET" })
     .then(parseResponse)
     .then(data => {
         const list = document.getElementById("correctGuesses");
         list.innerHTML = "";
+        document.getElementById("score").textContent = data.length;
         data.forEach(country => {
-            const dt = document.createElement("dt");
-            dt.textContent = `${country.common_name}`;
-            const dd = document.createElement("dd")
-            dd.textContent =  `(population: ${country.population.toLocaleString()})`;
-            list.appendChild(dt);
-            list.appendChild(dd);
+            const item = document.createElement("li");
+            const flag = document.createElement("span");
+            flag.className = "listFlag";
+            flag.textContent = decodeEntities(country.html_flag_code);
+            const name = document.createElement("span");
+            name.className = "listName";
+            name.textContent = country.common_name;
+            const more = document.createElement("button");
+            more.type = "button";
+            more.className = "btn btn-ghost moreInfoButton";
+            more.textContent = "More info";
+            more.addEventListener("click", () => {
+                more.textContent = "More info";
+                window.dispatchEvent(new CustomEvent("show-more-info", {detail: {commonName: country.common_name, button: more}}));
+            });
+            item.append(flag, name, more);
+            list.appendChild(item);
         });
     })
     .catch(error => console.error("Error", error));

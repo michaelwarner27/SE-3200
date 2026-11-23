@@ -1,19 +1,47 @@
 import Country from "./country.js" 
-import {storeUserCountry, listUserCountries} from "./resourceful.js"
+import {storeUserCountry, listUserCountries, clearUserCountries} from "./resourceful.js"
 import { register, login, logout, getCurrentUser } from "./auth.js"
 
 
-//ToDo: add the rest of the country names
-const commonNames = ['Abkhazia', 'Afghanistan', 'Albania', 'Algeria', 'American Samoa', 'Andorra', 'Angola', 'Anguilla', 'Antarctica', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Bouvet Island', 'Brazil', 'British Indian Ocean Territory', 'British Virgin Islands', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cambodia', 'Cameroon', 'Canada', 'Caribbean Netherlands', 'Cayman Islands', 'Central African Republic', 'Chad', 'Chile', 'China', 'Christmas Island', 'Cocos (Keeling) Islands', 'Colombia', 'Comoros', 'Congo', 'Cook Islands', 'Costa Rica', 'Croatia', 'Cuba', 'Curaçao', 'Cyprus', 'Czechia', 'DRC', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Falkland Islands', 'Faroe Islands', 'Fiji', 'Finland', 'France', 'French Guiana', 'French Polynesia', 'French Southern and Antarctic Lands', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guadeloupe', 'Guam', 'Guatemala', 'Guernsey', 'Guinea', 'Guinea-Bissau', 'Guyana', 'Haiti', 'Heard Island and McDonald Islands', 'Honduras', 'Hong Kong'];
-let currentCountry = new Country("example")
-async function Start(){
-    currentCountry = new Country(commonNames[Math.ceil(Math.random() * commonNames.length)]) 
-    await currentCountry.fetchPayload()
-    if (! currentCountry){
-        // Do error thing
+// Country-name lists are generated once by tools/build_country_lists.py into static/data/countries/
+const LIST_DIR = "/static/data/countries/"
+const LIST_KEY = "countryList"
+const listCache = new Map()
+let countryNames = []
+
+async function loadList(id){
+    if (!listCache.has(id)){
+        const response = await fetch(`${LIST_DIR}${id}.json`)
+        if (!response.ok) throw new Error(`Could not load the "${id}" country list`)
+        listCache.set(id, await response.json())
     }
-    console.log(currentCountry)
-    console.log(currentCountry.getCommonName())
+    countryNames = listCache.get(id)
+}
+
+async function setupListSelect(){
+    const select = document.getElementById("listSelect")
+    try{
+        const lists = await (await fetch(`${LIST_DIR}index.json`)).json()
+        select.innerHTML = ""
+        lists.forEach(list => select.add(new Option(`${list.label} (${list.count})`, list.id)))
+        let saved = null
+        try { saved = localStorage.getItem(LIST_KEY) } catch {}
+        select.value = lists.some(list => list.id === saved) ? saved : lists[0].id
+        await loadList(select.value)
+    } catch (error){
+        setGuessMessage(error.message)
+    }
+}
+
+let currentCountry = new Country()
+async function Start(){
+    currentCountry = new Country(countryNames[Math.floor(Math.random() * countryNames.length)]) 
+    if (!await currentCountry.fetchPayload()){
+        currentCountry = new Country()
+        setGuessMessage("Couldn't load a country. Press Start again.")
+        return
+    }
+    setGuessMessage("")
     setHint()
 }
 
@@ -25,24 +53,82 @@ function setHint(){
 }
 
 function Cheat(){
-    document.getElementById("cheat").innerHTML = "This nation is " + currentCountry.getCommonName()
+    if (!currentCountry.getCommonName()){
+        document.getElementById("cheat").innerHTML = "Click Start!"
+    }else{
+        document.getElementById("cheat").innerHTML = "This nation is " + currentCountry.getCommonName()
+
+    }
 }
 
-function DisplayMoreInfo(){
-    document.getElementById("infoCountryName").innerHTML = currentCountry.getCommonName()
-    document.getElementById("info").innerHTML = `Population: ${currentCountry.getPopulation()} <br> Land Area in Miles: ${currentCountry.getLandAreaMiles()}`
-    document.getElementById("Flag").src = currentCountry.getFlagPNG()
+const MEMBERSHIP_LABELS = {
+    african_union: "African Union", arab_league: "Arab League", asean: "ASEAN", brics: "BRICS",
+    commonwealth: "Commonwealth", eu: "EU", eurozone: "Eurozone", g20: "G20", g7: "G7",
+    nato: "NATO", oecd: "OECD", opec: "OPEC", schengen: "Schengen", un: "UN"
+}
+
+function setBadges(id, labels){
+    const container = document.getElementById(id)
+    container.replaceChildren()
+    if (labels.length === 0){
+        container.textContent = "None"
+        return
+    }
+    labels.forEach(label => {
+        const badge = document.createElement("span")
+        badge.className = "badge"
+        badge.textContent = label
+        container.appendChild(badge)
+    })
+}
+
+function countryStatus(c){
+    const status = []
+    status.push(c.sovereign ? "Sovereign state" : "Not sovereign")
+    if (c.dependency) status.push(c.dependency_type ? `Dependency (${c.dependency_type})` : "Dependency")
+    if (c.disputed) status.push("Disputed")
+    if (c.un_member) status.push("UN member")
+    if (c.un_observer) status.push("UN observer")
+    return status
+}
+
+function DisplayMoreInfo(country = currentCountry){
+    const list = (items) => items && items.length ? items.join(", ") : "—"
+    const text = (id, value) => document.getElementById(id).textContent = value || "—"
+
+    document.getElementById("infoCountryName").textContent = country.getCommonName()
+    document.getElementById("Flag").src = country.getFlagPNG()
+    text("infoDescription", country.getShortDescription())
+    text("infoCapital", list(country.getCapitals()))
+    text("infoLanguages", list(country.getLanguages()))
+    text("infoCurrency", list(country.getCurrencies()))
+    text("infoSubregion", country.getSubregion())
+    text("infoGovernment", country.getGovernmentType())
+    setBadges("infoStatus", countryStatus(country.getClassification()))
+    setBadges("infoMemberships", Object.entries(country.getMemberships())
+        .filter(([, member]) => member)
+        .map(([key]) => MEMBERSHIP_LABELS[key] ?? key))
+
+    const wiki = document.getElementById("infoWiki")
+    const url = country.getWikipediaURL()
+    wiki.hidden = !(url && url.startsWith("https://"))
+    if (!wiki.hidden) wiki.href = url
 }
 
 function SubmitGuess() {
+    if (!currentCountry.getCommonName()){
+        return
+    }
     let userGuess = document.getElementById("guess").value
     if (userGuess.trim().toLowerCase() == currentCountry.getCommonName().toLowerCase()){
+        setGuessMessage("")
+        document.getElementById("cheat").textContent = ""
         // createUserCountry()
         correctGuess()
         DisplayMoreInfo()
         Start()
     }else{
-        alert("Wrong! Try again")
+        setGuessMessage("Wrong! Try again")
     }
     
 }
@@ -70,11 +156,16 @@ function showLoggedIn(user){
 
 function showLoggedOut(){
     document.getElementById("correctGuesses").innerHTML = ""
+    document.getElementById("score").textContent = "0"
     document.getElementById("authDiv").hidden = false;
     document.getElementById("userBar").hidden = true;
     document.getElementById("guessDiv").hidden = true;
     document.getElementById("correctDiv").hidden = true;
     document.getElementById("moreInfoDiv").hidden = true;
+}
+
+function setGuessMessage(text){
+    document.getElementById("guessMessage").textContent = text
 }
 
 function setAuthMessage(text){
@@ -83,7 +174,22 @@ function setAuthMessage(text){
 
 
 document.getElementById("start").addEventListener("click", Start)
+document.getElementById("listSelect").addEventListener("change", async (event) => {
+    try { localStorage.setItem(LIST_KEY, event.target.value) } catch {}
+    try{
+        await loadList(event.target.value)
+        setGuessMessage("")
+        Start()
+    } catch (error){
+        setGuessMessage(error.message)
+    }
+})
+setupListSelect()
 document.getElementById("cheatButton").addEventListener("click", Cheat)
+document.getElementById("restartButton").addEventListener("click", async () => {
+    if (!confirm("Restart? This permanently deletes all of your correct guesses.")) return
+    await clearUserCountries()
+})
 
 const form = document.getElementById('form');
 form.addEventListener("submit", function(event){
@@ -129,6 +235,23 @@ document.getElementById("logoutButton").addEventListener("click", async() => {
 })
 
 // resourceful.js fires this when /countries answers 401 (e.g. the server restarted and lost the session)
+// resourceful.js fires this when a "More info" button is clicked in the correct guesses list
+window.addEventListener("show-more-info", async (event) => {
+    const button = event.detail.button
+    button.disabled = true
+    try{
+        const country = new Country(event.detail.commonName)
+        if (!await country.fetchPayload()) throw new Error("No data found")
+        DisplayMoreInfo(country)
+        document.getElementById("moreInfoDiv").scrollIntoView({behavior: "smooth", block: "nearest"})
+    } catch (error){
+        console.error(error)
+        button.textContent = "Failed, retry"
+    } finally{
+        button.disabled = false
+    }
+})
+
 window.addEventListener("session-expired", () => {
     setAuthMessage("Your session has expired. Please log in again.")
     showLoggedOut()

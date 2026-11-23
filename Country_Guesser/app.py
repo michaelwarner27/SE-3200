@@ -1,8 +1,16 @@
 import flask, flask_cors
+import json
+import os
 import secrets
 import functools
+import urllib.error
+import urllib.parse
+import urllib.request
+from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
 from server.database import Database
+
+load_dotenv()  # reads RESTCOUNTRIES_KEY from a git-ignored .env file
 
 app = flask.Flask(__name__)
 flask_cors.CORS(app)
@@ -12,6 +20,8 @@ sessions = {}
 
 COUNTRY_FIELDS = ["common_name", "official_name", "population", "html_flag_code", "area"]
 INT_FIELDS = ("population", "area")
+COUNTRY_API_URL = "https://api.restcountries.com/countries/v5/names.common/"
+country_cache = {}  # common name -> restcountries JSON, so repeat lookups don't use up API quota
 USER_FIELDS = ["first_name", "last_name", "email", "password"]
 LOGIN_FIELDS = ["email", "password"]
 
@@ -107,6 +117,38 @@ def handle_delete(id):
     if not db.delete_country(id, flask.g.user_id):
         raise ApiError("Country not found", 404)
     return flask.jsonify({"message": "Country deleted"}), 200
+
+
+@app.route("/api/country/<path:name>", methods=["GET"])
+@require_auth
+def handle_country_info(name):
+    """Proxy to restcountries.com so the API key stays on the server."""
+    key = name.strip().lower()
+    if key in country_cache:
+        return flask.jsonify(country_cache[key]), 200
+
+    api_key = os.environ.get("RESTCOUNTRIES_KEY")
+    if not api_key:
+        raise ApiError("Server is missing RESTCOUNTRIES_KEY", 500)
+
+    request = urllib.request.Request(
+        COUNTRY_API_URL + urllib.parse.quote(name.strip(), safe=""),
+        headers={"Authorization": f"Bearer {api_key}", "User-Agent": "country-guesser"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=10) as response:
+            data = json.load(response)
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            raise ApiError("Country not found", 404)
+        raise ApiError("Country service error", 502)
+    except (urllib.error.URLError, TimeoutError, ValueError):
+        raise ApiError("Country service unavailable", 502)
+
+    if not data.get("data", {}).get("objects"):
+        raise ApiError("Country not found", 404)
+    country_cache[key] = data
+    return flask.jsonify(data), 200
 
 
 @app.route("/users", methods=["POST"])

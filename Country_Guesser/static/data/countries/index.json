@@ -1,0 +1,47 @@
+[
+ {
+  "id": "all",
+  "label": "All countries",
+  "count": 254
+ },
+ {
+  "id": "un",
+  "label": "UN members",
+  "count": 193
+ },
+ {
+  "id": "africa",
+  "label": "Africa",
+  "count": 59
+ },
+ {
+  "id": "antarctica",
+  "label": "Antarctica",
+  "count": 5
+ },
+ {
+  "id": "asia",
+  "label": "Asia",
+  "count": 55
+ },
+ {
+  "id": "europe",
+  "label": "Europe",
+  "count": 56
+ },
+ {
+  "id": "north-america",
+  "label": "North America",
+  "count": 41
+ },
+ {
+  "id": "oceania",
+  "label": "Oceania",
+  "count": 27
+ },
+ {
+  "id": "south-america",
+  "label": "South America",
+  "count": 14
+ }
+]

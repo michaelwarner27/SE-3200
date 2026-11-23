@@ -1,46 +1,47 @@
-const APIKEY = "bearer rc_live_dda8f02bea1b422a9bc24dbaba0c63bb"
-const baseURL = "https://api.restcountries.com/countries/v5?"
+// Country data comes from our own server, which holds the restcountries API key
+const baseURL = "/api/country/"
 
 
 class Country{
     constructor(commonName){
         this.commonName = commonName
-        if (commonName == "example"){
-            return
-        }
-        console.log(this.commonName)
-        this.fetchPayload()
+        // Call fetchPayload() yourself (and await it) once you want the data
     }
 
     async fetchPayload(){
-        let search = baseURL + "names.common=" + this.commonName
-        const response = await fetch(search, {
-            method: 'GET',
-        headers: {
-            'Authorization': APIKEY
+        // Exact-name route: a substring query would match "Guinea" to "Equatorial Guinea" first
+        let search = baseURL + encodeURIComponent(this.commonName)
+        const response = await fetch(search)
+        if (response.status === 401){
+            window.dispatchEvent(new Event("session-expired"))
         }
-        });
-        this.payload = await response.json();
-        console.log(this.payload)
-        this.parse()
-        if (!this.payload){
+        this.payload = await response.json().catch(() => null);
+        if (!response.ok || !this.payload?.data?.objects?.length){
             return false
-            // console.error("No payload");
-            // exit()
         }
-        
+        this.parse()
         return true
     }
 
     parse(){
-        this.population = this.payload.data.objects.map(country => country.population)[0]
-        this.flagHTML = this.payload.data.objects.map(country => country.flag.html_entity) [0]
-        this.flagPNG  = this.payload.data.objects.map(country => country.flag.url_png)[0]
-        this.currency = this.payload.data.objects.map(country => country.currencies)[0].name
-        this.areaMiles = this.payload.data.objects.map(country => country.area.miles) [0]
-        this.areaKilometer = this.payload.data.objects.map(country => country.area.kilometer)[0]
-        this.officialName = this.payload.data.objects.map(country => country.names.official)[0]
-        this.capital = this.payload.data.objects.map(country => country.capital)[0] 
+        const c = this.payload.data.objects[0]
+        this.population = c.population
+        this.flagHTML = c.flag?.html_entity
+        this.flagPNG  = c.flag?.url_png
+        // Territories such as Antarctica have empty currencies/capitals/languages, so guard each one
+        this.currency = c.currencies?.[0]?.name
+        this.areaMiles = c.area?.miles
+        this.areaKilometer = c.area?.kilometers
+        this.officialName = c.names?.official
+        this.capitals = (c.capitals ?? []).map(capital => capital.name)
+        this.languages = (c.languages ?? []).map(language => language.name)
+        this.currencies = (c.currencies ?? []).map(currency => currency.name)
+        this.subregion = c.subregion
+        this.governmentType = c.government_type
+        this.shortDescription = c.descriptions?.short
+        this.memberships = c.memberships ?? {}
+        this.classification = c.classification ?? {}
+        this.wikipediaURL = c.links?.wikipedia
     }
 
     getCommonName(){
@@ -67,6 +68,33 @@ class Country{
     }
     getCurrency(){
         return this.currency
+    }
+    getCapitals(){
+        return this.capitals
+    }
+    getLanguages(){
+        return this.languages
+    }
+    getCurrencies(){
+        return this.currencies
+    }
+    getSubregion(){
+        return this.subregion
+    }
+    getGovernmentType(){
+        return this.governmentType
+    }
+    getShortDescription(){
+        return this.shortDescription
+    }
+    getMemberships(){
+        return this.memberships
+    }
+    getClassification(){
+        return this.classification
+    }
+    getWikipediaURL(){
+        return this.wikipediaURL
     }
 
 }

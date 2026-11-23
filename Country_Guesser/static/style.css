@@ -1,58 +1,287 @@
+:root {
+    --ocean-900: #0b3d63;
+    --ocean-700: #0e6ba8;
+    --ocean-500: #1ea5e0;
+    --ocean-300: #7dd3f5;
+    --ocean-100: #e3f5fd;
+    --sand: #ffd166;
+    --coral: #ff6b6b;
+    --mint: #2ec4b6;
+    --ink: #123047;
+    --muted: #5b7a90;
+    --radius: 20px;
+    --shadow: 0 8px 24px rgba(11, 61, 99, 0.15);
+}
+
 [hidden] { display: none !important; }
 
-body{
-    display: grid;
-    grid-template-columns: repeat(12, [col-start] 1fr);
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
+    color: var(--ink);
+    background:
+        radial-gradient(circle at 15% 10%, rgba(125, 211, 245, 0.55), transparent 40%),
+        radial-gradient(circle at 85% 90%, rgba(255, 209, 102, 0.35), transparent 40%),
+        linear-gradient(160deg, #e3f5fd 0%, #bfe8fb 100%);
+    background-attachment: fixed;
 }
-h1{
+
+/* ---------- header ---------- */
+#topBar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    padding: 16px 32px;
+    color: #fff;
+    background: linear-gradient(90deg, var(--ocean-900), var(--ocean-700) 60%, var(--ocean-500));
+    box-shadow: var(--shadow);
+}
+h1 {
+    margin: 0;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+}
+#userBar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+#welcome { font-weight: 500; }
+#scoreBadge {
+    background: var(--sand);
+    color: var(--ocean-900);
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 999px;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+}
+
+main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 20px 48px;
+}
+
+/* ---------- cards & forms ---------- */
+.card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+}
+h2 { margin: 0 0 12px; font-size: 1.5rem; color: var(--ocean-700); }
+h3 { margin: 0 0 12px; font-size: 2rem; color: var(--ocean-900); }
+
+label {
+    display: block;
+    margin: 12px 0 4px;
+    font-weight: 500;
+}
+label small { color: var(--muted); font-weight: 400; }
+
+input[type="text"], input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 12px 14px;
+    font: inherit;
+    border: 2px solid var(--ocean-100);
+    border-radius: 12px;
+    background: #f8fcff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+input:focus {
+    outline: none;
+    border-color: var(--ocean-500);
+    box-shadow: 0 0 0 4px rgba(30, 165, 224, 0.2);
+}
+
+/* ---------- buttons ---------- */
+.btn {
+    font: inherit;
+    font-weight: 600;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.18);
+    transition: transform 0.1s, box-shadow 0.1s, filter 0.15s;
+}
+.btn:hover { filter: brightness(1.07); }
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0, 0, 0, 0.18); }
+.btn:focus-visible { outline: 3px solid var(--sand); outline-offset: 2px; }
+.btn-primary { background: var(--ocean-500); color: #fff; }
+.btn-secondary { background: var(--mint); color: #fff; }
+.btn-ghost {
+    background: rgba(255, 255, 255, 0.25);
+    color: inherit;
+    box-shadow: none;
+    padding: 8px 16px;
+}
+.card .btn-ghost { background: var(--ocean-100); color: var(--ocean-700); }
+
+/* ---------- auth ---------- */
+#authMessage {
+    min-height: 1.5em;
+    margin: 0 0 16px;
     text-align: center;
-    font-size: 3rem;
-    grid-column: 1/13;
-    grid-row: 1;
-    text-decoration: underline;
+    font-weight: 500;
+    color: var(--coral);
 }
-
-#guessDiv{
-    grid-column: 2/7;
-    grid-row: 2;
+.authCards {
     display: grid;
-    row-gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
 }
-#correctDiv{
-    grid-column: 2/7;
-    grid-row: 3;
+.authCards .btn { width: 100%; margin-top: 20px; }
+.nameRow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ---------- game layout ---------- */
+#gameLayout {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 24px;
+    align-items: start;
 }
-#moreInfoDiv{
-    grid-column: 8/11;
-    grid-row: 2/4;
-}
-#start{
-    /* button */
-    margin: auto;
-    width: 50%;
-    height: auto;
-    font-size: 2rem;
+#leftColumn { display: grid; gap: 24px; }
+#moreInfoDiv { position: sticky; top: 24px; text-align: center; }
+
+#guessDiv { display: grid; gap: 20px; }
+#start {
+    justify-self: center;
+    font-size: 1.6rem;
+    padding: 14px 40px;
 }
 
-table{
-    border-spacing:0px 10px;
+.hints {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
 }
-tr th{
-    font-size: 2rem;
-    font-weight: bold;
-    text-align: left;
-
+.hint {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px;
+    text-align: center;
+    background: var(--ocean-100);
+    border-radius: 16px;
 }
-tr td{
-    font-size: 1rem;
-    background-color: lightgray;
-}
-
-#moreInfoDiv #Flag{
-    padding: 10px;
-    height: 30%;
-    width: auto;
-}
-#FlagHTML{
+.hintLabel { font-size: 0.9rem; font-weight: 600; color: var(--muted); }
+.hintValue { font-size: 1.1rem; font-weight: 600; color: var(--ocean-900); overflow-wrap: anywhere; }
+#FlagHTML {
     font-family: 'Noto Color Emoji', sans-serif;
+    font-size: 3rem;
+    line-height: 1;
+}
+
+#form label { margin-top: 0; font-size: 1.15rem; }
+.guessRow { display: flex; gap: 10px; }
+.guessRow input { flex: 1; }
+
+#guessMessage {
+    margin: 8px 0 0;
+    min-height: 1.5em;
+    font-weight: 500;
+    color: var(--coral);
+}
+
+.cheatRow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+#cheat { margin: 0; font-weight: 500; color: var(--coral); }
+
+/* ---------- correct guesses ---------- */
+.cardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.cardHeader h2 { margin: 0; }
+
+#correctGuesses {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-height: 340px;
+    overflow-y: auto;
+    display: grid;
+    gap: 8px;
+}
+#correctGuesses:empty::before {
+    content: "No correct guesses yet. Press Start!";
+    color: var(--muted);
+}
+#correctGuesses li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    padding: 10px 14px;
+    font-weight: 600;
+    background: var(--ocean-100);
+    border-radius: 12px;
+}
+.listName { flex: 1; }
+.moreInfoButton { padding: 6px 14px; font-size: 0.85rem; background: #fff !important; }
+.listFlag {
+    font-family: 'Noto Color Emoji', sans-serif;
+    font-size: 1.4rem;
+    vertical-align: middle;
+}
+
+/* ---------- latest guess ---------- */
+#Flag {
+    display: block;
+    width: 100%;
+    max-height: 240px;
+    object-fit: contain;
+    margin: 0 auto 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+#infoDescription { margin: 0 0 16px; line-height: 1.5; color: var(--muted); }
+#info { margin: 0 0 16px; text-align: left; display: grid; gap: 4px; }
+#info dt { font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-top: 8px; }
+#info dd { margin: 0; font-weight: 500; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.badge {
+    padding: 3px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ocean-700);
+    background: var(--ocean-100);
+    border-radius: 999px;
+}
+#infoWiki { display: inline-block; text-decoration: none; }
+
+/* ---------- small screens ---------- */
+@media (max-width: 800px) {
+    #topBar { padding: 14px 16px; }
+    #gameLayout { grid-template-columns: 1fr; }
+    #moreInfoDiv { position: static; order: -1; }
+    .hints { grid-template-columns: 1fr; }
+}
+
+/* ---------- country list picker ---------- */
+.listPicker { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.listPicker label { margin: 0; }
+select {
+    flex: 1;
+    min-width: 180px;
+    padding: 10px 14px;
+    font: inherit;
+    border: 2px solid var(--ocean-100);
+    border-radius: 12px;
+    background: #f8fcff;
+}
+select:focus {
+    outline: none;
+    border-color: var(--ocean-500);
+    box-shadow: 0 0 0 4px rgba(30, 165, 224, 0.2);
 }
